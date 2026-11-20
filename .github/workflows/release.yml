@@ -1,0 +1,71 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run tests
+        run: make test
+
+  # Distro packages build from GitHub's tag archive, so there is nothing to
+  # build or upload here: the release only carries the notes.
+  create_release:
+    name: Create GitHub Release
+    runs-on: ubuntu-24.04
+    needs: [test]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        run: |
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            CHANGELOG=$(git log --oneline --pretty=format:"- %s (%h)" | head -50)
+          else
+            CHANGELOG=$(git log --oneline --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD)
+          fi
+
+          cat > CHANGELOG.md << EOF
+          ## What's Changed
+
+          $CHANGELOG
+          EOF
+
+          if [ -n "$PREVIOUS_TAG" ]; then
+            cat >> CHANGELOG.md << EOF
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_TAG}...${{ github.ref_name }}
+          EOF
+          fi
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ github.ref_name }}
+          PRERELEASE_FLAG=""
+          case "$VERSION" in
+            *-*) PRERELEASE_FLAG="--prerelease" ;;
+          esac
+
+          gh release create "$VERSION" \
+            --title "Release $VERSION" \
+            --notes-file CHANGELOG.md \
+            $PRERELEASE_FLAG
