@@ -1,0 +1,7 @@
+paths:
+  .github/workflows/notify-packaging.yml:
+    ignore:
+      # actionlint's bundled metadata predates create-github-app-token v3,
+      # which added client-id and made app-id optional.
+      - 'missing input "app-id"'
+      - 'input "client-id" is not defined'

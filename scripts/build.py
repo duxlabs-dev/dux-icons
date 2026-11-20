@@ -93,7 +93,7 @@ def parse_hex(value: str) -> tuple[int, int, int]:
 
 
 def to_hex(rgb: tuple[int, int, int]) -> str:
-    return "#%02x%02x%02x" % rgb
+    return "#{:02x}{:02x}{:02x}".format(*rgb)
 
 
 def normalize_color(value, what: str) -> str:
@@ -136,7 +136,7 @@ def lab_to_rgb_float(lab: tuple[float, float, float]) -> tuple[float, float, flo
     fz = fy - b / 200
 
     def inv(t: float) -> float:
-        return t ** 3 if t ** 3 > 216 / 24389 else (116 * t - 16) / (24389 / 27)
+        return t**3 if t**3 > 216 / 24389 else (116 * t - 16) / (24389 / 27)
 
     x, y, z = (inv(v) * n for v, n in zip((fx, fy, fz), _D65))
     return (
@@ -194,9 +194,7 @@ def mono_matrix(badge: str, glyph: str) -> str:
     rows = []
     for i in range(3):
         span = light[i] - dark[i]
-        rows.append(
-            f"{fmt(span * 0.2126, 5)} {fmt(span * 0.7152, 5)} {fmt(span * 0.0722, 5)} 0 {fmt(dark[i], 5)}"
-        )
+        rows.append(f"{fmt(span * 0.2126, 5)} {fmt(span * 0.7152, 5)} {fmt(span * 0.0722, 5)} 0 {fmt(dark[i], 5)}")
     rows.append("0 0 0 1 0")
     return " ".join(rows)
 
@@ -236,9 +234,7 @@ def paint_tokens(text: str, palette: dict[str, str]) -> str:
     return TOKEN_RE.sub(lambda m: palette[m.group(1)], text)
 
 
-_LENGTH_RE = re.compile(
-    r"\s*([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)\s*(px|pt|pc|mm|cm|in)?\s*\Z"
-)
+_LENGTH_RE = re.compile(r"\s*([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)\s*(px|pt|pc|mm|cm|in)?\s*\Z")
 _UNIT_PX = {None: 1.0, "px": 1.0, "pt": 96 / 72, "pc": 16.0, "mm": 96 / 25.4, "cm": 96 / 2.54, "in": 96.0}
 
 
@@ -331,10 +327,10 @@ def place_viewport(root: ET.Element, slot: Slot) -> tuple[str, tuple[float, floa
     return f"translate({fmt(tx)} {fmt(ty)}) scale({scale_text})", (vx, vy, vw, vh)
 
 
-_CSS_SKIP_RE = re.compile(r"/\*.*?\*/|<!--|-->", re.S)
+_CSS_SKIP_RE = re.compile(r"/\*.*?\*/|<!--|-->", re.DOTALL)
 _CSS_PROTECTED_RE = re.compile(r"(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|\[[^\]]*\])")
 _CSS_NAME_RE = re.compile(r"([.#])(-?[A-Za-z_\u0080-￿][\w\u0080-￿-]*)")
-_CSS_ROOT_RE = re.compile(r"(?:svg(?![\w-])|:root)", re.I)
+_CSS_ROOT_RE = re.compile(r"(?:svg(?![\w-])|:root)", re.IGNORECASE)
 _URL_REF_RE = re.compile(r"url\(\s*(['\"]?)#([^'\")]*?)\1\s*\)")
 
 
@@ -389,7 +385,7 @@ def _css_selector(selector: str, scope: str, prefix: str) -> str:
     selector = "".join(parts)
     root = _CSS_ROOT_RE.match(selector)
     if root:
-        return f"#{scope}{selector[root.end():]}"
+        return f"#{scope}{selector[root.end() :]}"
     return f"#{scope} {selector}"
 
 
@@ -969,9 +965,7 @@ class VendorIcons:
         for theme in self.themes:
             for base in self.dirs.icon_bases:
                 candidates = [
-                    folder / f"{name}{ext}"
-                    for folder in self._directories(base / theme)
-                    for ext in self.EXTENSIONS
+                    folder / f"{name}{ext}" for folder in self._directories(base / theme) for ext in self.EXTENSIONS
                 ]
                 found = self._first(candidates)
                 if found is not None:
@@ -1116,7 +1110,7 @@ def load_template(src: Path, name: str, palette: dict[str, str], gradient: bool 
         raise BuildError(f"{path}: the root <svg> must declare xmlns:xlink")
     viewbox = re.search(r'viewBox="([^"]*)"', head.group(0))
     if not viewbox or parse_viewbox(viewbox.group(1)) != (0.0, 0.0, CANVAS, CANVAS):
-        raise BuildError(f"{path}: the template canvas must be viewBox=\"0 0 64 64\"")
+        raise BuildError(f'{path}: the template canvas must be viewBox="0 0 64 64"')
     if re.search(r'\bid="(?:c-|dx-)', text):
         raise BuildError(f"{path}: ids starting with c- or dx- are reserved for content")
     if gradient:
@@ -1283,7 +1277,9 @@ def build_own_aliases(theme: Theme, src: Path, report: Report) -> None:
         for target in sorted(mapping):
             for alias in sorted(str(a) for a in mapping[target] or []):
                 if alias in own_icons:
-                    report.warnings.append(f"aliases.json: '{alias}' (alias of '{target}') is already an own icon; remove the alias")
+                    report.warnings.append(
+                        f"aliases.json: '{alias}' (alias of '{target}') is already an own icon; remove the alias"
+                    )
                 elif alias in theme.names:
                     report.warnings.append(f"aliases.json: '{alias}' is listed more than once; '{target}' is ignored")
                 elif theme.add_alias(alias, target, context):
@@ -1401,9 +1397,7 @@ def check_out_dir(out: Path) -> None:
     if (out / MARKER).is_file() and not (out / MARKER).is_symlink():
         return
     if any(out.iterdir()):
-        raise BuildError(
-            f"refusing --out {out}: it holds files that {PRODUCT} did not build (no {MARKER} marker)"
-        )
+        raise BuildError(f"refusing --out {out}: it holds files that {PRODUCT} did not build (no {MARKER} marker)")
 
 
 def _exchange(a: Path, b: Path) -> bool:
@@ -1473,9 +1467,13 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
         help=f"directory to publish the theme to (default: $XDG_DATA_HOME/icons/{DEFAULT_OUT_NAME})",
     )
     parser.add_argument("--name", help="theme name written to index.theme (default: the Name in index.theme.in)")
-    parser.add_argument("--palette", type=Path, metavar="FILE", help="JSON with badge, glyph and optionally back colors")
+    parser.add_argument(
+        "--palette", type=Path, metavar="FILE", help="JSON with badge, glyph and optionally back colors"
+    )
     parser.add_argument("--from-dms", action="store_true", help="read colors from $XDG_CACHE_HOME/dms/dms-colors.json")
-    parser.add_argument("--mode", choices=("dark", "light"), help="DMS color mode for --from-dms (default: the file's mode)")
+    parser.add_argument(
+        "--mode", choices=("dark", "light"), help="DMS color mode for --from-dms (default: the file's mode)"
+    )
     parser.add_argument("--badge", metavar="HEX", help="badge color, e.g. #9ecaff")
     parser.add_argument("--glyph", metavar="HEX", help="glyph color, e.g. #003258")
     parser.add_argument("--back", metavar="HEX", help="back plate color (default: the badge color 12 tones darker)")
@@ -1485,7 +1483,9 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=None,
         help="paint vendor content in tones between the badge and glyph colors (default: recipe 'mono')",
     )
-    parser.add_argument("--shape", metavar="NAME", help="badge shape, a file in src/templates (default: recipe 'template')")
+    parser.add_argument(
+        "--shape", metavar="NAME", help="badge shape, a file in src/templates (default: recipe 'template')"
+    )
     parser.add_argument(
         "--gradient",
         action=argparse.BooleanOptionalAction,
@@ -1500,13 +1500,19 @@ def summarize(report: Report, verbose: bool) -> list[str]:
     get = report.get
     lines = [
         f"own icons: {get('own')} built",
-        f"desktop entries: {get('entries')} seen, {get('entries-visible')} visible with an icon "
-        f"({get('entries-hidden')} hidden, {get('entries-no-icon')} without Icon=, {get('entries-not-app')} not applications)",
-        f"vendor icons: {get('vendor-icons')} distinct, {get('vendor-svg')} built from SVG, "
-        f"{get('vendor-raster')} built from raster, "
-        f"{sum(len(v) for v in report.skips['vendor'].values())} skipped",
+        (
+            f"desktop entries: {get('entries')} seen, {get('entries-visible')} visible with an icon "
+            f"({get('entries-hidden')} hidden, {get('entries-no-icon')} without Icon=, "
+            f"{get('entries-not-app')} not applications)"
+        ),
+        (
+            f"vendor icons: {get('vendor-icons')} distinct, {get('vendor-svg')} built from SVG, "
+            f"{get('vendor-raster')} built from raster, "
+            f"{sum(len(v) for v in report.skips['vendor'].values())} skipped"
+        ),
         f"aliases: {get('alias-own')} own, {get('alias-desktop')} desktop entry, {get('alias-mime')} MIME type",
     ]
+
     def listed(names: list[str]) -> str:
         names = sorted(names)
         shown = names if verbose or len(names) <= 6 else names[:6] + [f"... {len(names) - 6} more (-v lists all)"]

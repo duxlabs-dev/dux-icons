@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures"
 sys.path.insert(0, str(ROOT / "scripts"))
 
-import build  # noqa: E402
+import build
 
 SVG = "{http://www.w3.org/2000/svg}"
 XLINK = "{http://www.w3.org/1999/xlink}"
@@ -80,7 +80,9 @@ class GeometryTests(unittest.TestCase):
             self.assertIsNone(build.parse_length(value), value)
 
     def test_viewbox_maps_onto_the_slot(self):
-        transform, viewport = build.place_viewport(svg_root('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"/>'), slot(0.2))
+        transform, viewport = build.place_viewport(
+            svg_root('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"/>'), slot(0.2)
+        )
         self.assertEqual(transform, "translate(12.8 12.8) scale(1.6)")
         self.assertEqual([round(v, 4) for v in viewport], [12.8, 12.8, 38.4, 38.4])
 
@@ -101,7 +103,9 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual([round(v, 4) for v in viewport], [16, 24, 32, 16])
 
     def test_preserve_aspect_ratio_none_stretches(self):
-        root = svg_root('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 10 10" preserveAspectRatio="none"/>')
+        root = svg_root(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 10 10" preserveAspectRatio="none"/>'
+        )
         transform, _ = build.place_viewport(root, slot(0.25))
         self.assertEqual(transform, "translate(16 24) scale(3.2 1.6)")
 
@@ -186,7 +190,19 @@ class InlineTests(unittest.TestCase):
     def test_fixture_with_editor_cruft_is_cleaned(self):
         data = (FIXTURES / "data/icons/hicolor/scalable/apps/alpha.svg").read_bytes()
         content = build.inline_svg(build.parse_svg(data), slot(), True)
-        for gone in ("inkscape", "sodipodi", "rdf", "metadata", "namedview", "<title", "<script", "onload", "DOCTYPE", "<?xml", "<!--"):
+        for gone in (
+            "inkscape",
+            "sodipodi",
+            "rdf",
+            "metadata",
+            "namedview",
+            "<title",
+            "<script",
+            "onload",
+            "DOCTYPE",
+            "<?xml",
+            "<!--",
+        ):
             self.assertNotIn(gone, content)
         tree = wrap(content)
         ids = [el.get("id") for el in tree.iter() if el.get("id")]
@@ -196,7 +212,9 @@ class InlineTests(unittest.TestCase):
         self.assertIn('fill="url(#c-grad)"', content)
         self.assertIn("stroke:url(#c-grad2)", content)
         self.assertIn('clip-path="url(#c-clip)"', content)
-        hrefs = [el.get("href") or el.get(XLINK + "href") for el in tree.iter() if el.get("href") or el.get(XLINK + "href")]
+        hrefs = [
+            el.get("href") or el.get(XLINK + "href") for el in tree.iter() if el.get("href") or el.get(XLINK + "href")
+        ]
         self.assertEqual(sorted(hrefs), ["#c-grad", "#c-tile", "#c-tile"])
         for ref in re.findall(r"url\(#([^)]+)\)", content) + [h[1:] for h in hrefs]:
             self.assertIn(ref, ids)
@@ -216,14 +234,31 @@ class InlineTests(unittest.TestCase):
 
     def test_elements_without_a_namespace_are_treated_as_svg(self):
         content = self.inline('<svg viewBox="0 0 8 8"><rect width="8" height="8"/></svg>', clip=False)
-        self.assertEqual(content, '<g id="dx-content" transform="translate(10.24 10.24) scale(5.44)"><rect width="8" height="8"/></g>')
+        self.assertEqual(
+            content,
+            '<g id="dx-content" transform="translate(10.24 10.24) scale(5.44)"><rect width="8" height="8"/></g>',
+        )
 
     def test_viewport_is_clipped_with_a_mask(self):
-        content = self.inline('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 10 10"><rect width="99" height="99"/></svg>')
+        content = self.inline(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 10 10"><rect width="99" height="99"/></svg>'
+        )
         tree = wrap(content)
         mask = tree.find(SVG + "mask")
-        self.assertEqual(mask.attrib, {"id": "dx-clip", "maskUnits": "userSpaceOnUse", "x": "10.24", "y": "21.12", "width": "43.52", "height": "21.76"})
-        self.assertEqual(mask[0].attrib, {"x": "10.24", "y": "21.12", "width": "43.52", "height": "21.76", "fill": "#fff"})
+        self.assertEqual(
+            mask.attrib,
+            {
+                "id": "dx-clip",
+                "maskUnits": "userSpaceOnUse",
+                "x": "10.24",
+                "y": "21.12",
+                "width": "43.52",
+                "height": "21.76",
+            },
+        )
+        self.assertEqual(
+            mask[0].attrib, {"x": "10.24", "y": "21.12", "width": "43.52", "height": "21.76", "fill": "#fff"}
+        )
         self.assertEqual(tree.find(SVG + "g").get("mask"), "url(#dx-clip)")
         self.assertNotIn("clip-path", content)
 
@@ -250,7 +285,9 @@ class InlineTests(unittest.TestCase):
         doc = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8">%s<rect width="8" height="8" clip-path="url(#k)"/></svg>'
         bare = self.inline(doc % '<clipPath id="k"><rect width="4" height="4"/></clipPath>', clip=False)
         self.assertIn('<defs><clipPath id="c-k"><rect width="4" height="4"/></clipPath></defs>', bare)
-        nested = self.inline(doc % '<defs><g><clipPath id="k"><rect width="4" height="4"/></clipPath></g></defs>', clip=False)
+        nested = self.inline(
+            doc % '<defs><g><clipPath id="k"><rect width="4" height="4"/></clipPath></g></defs>', clip=False
+        )
         self.assertEqual(nested.count("<defs>"), 1)
 
     def test_references_outside_the_document_skip_the_icon(self):
@@ -267,8 +304,14 @@ class InlineTests(unittest.TestCase):
 
     def test_data_images_and_links_are_kept(self):
         doc = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8">%s</svg>'
-        self.assertIn('href="data:image/png;base64,AAAA"', self.inline(doc % '<image href=" data:image/png;base64,AAAA" width="8" height="8"/>'))
-        self.assertIn('href="https://example.invalid/"', self.inline(doc % '<a href="https://example.invalid/"><rect width="8" height="8"/></a>'))
+        self.assertIn(
+            'href="data:image/png;base64,AAAA"',
+            self.inline(doc % '<image href=" data:image/png;base64,AAAA" width="8" height="8"/>'),
+        )
+        self.assertIn(
+            'href="https://example.invalid/"',
+            self.inline(doc % '<a href="https://example.invalid/"><rect width="8" height="8"/></a>'),
+        )
 
     def test_documents_that_cannot_be_drawn_are_skipped(self):
         cases = {
@@ -400,7 +443,15 @@ class LayoutTests(unittest.TestCase):
         self.assertEqual(self.place(recipe, "places", "folder-remote"), (12.8, 15.8, 38.4))
 
     def test_bad_overrides_stop_the_build(self):
-        for overrides in ([{"offset": [0, 1]}], [{"match": 3}], [{"match": []}], ["folder"], {"folder": {"offset": [0, 1]}}, [{"match": "folder", "offset": [1]}], [{"match": "folder", "padding": 0.5}]):
+        for overrides in (
+            [{"offset": [0, 1]}],
+            [{"match": 3}],
+            [{"match": []}],
+            ["folder"],
+            {"folder": {"offset": [0, 1]}},
+            [{"match": "folder", "offset": [1]}],
+            [{"match": "folder", "padding": 0.5}],
+        ):
             with self.assertRaises(build.BuildError, msg=overrides):
                 build.layout_for("places", "folder", {"overrides": overrides}, True)
 
@@ -456,7 +507,9 @@ class PublishedThemeTests(BuildCase):
         stdout = self.built()
         self.assertIn(f"Dux Icons: published 'Dux Icons' to {self.out}", stdout)
         self.assertIn("own icons: 2 built", stdout)
-        self.assertIn("desktop entries: 22 seen, 19 visible with an icon (1 hidden, 1 without Icon=, 1 not applications)", stdout)
+        self.assertIn(
+            "desktop entries: 22 seen, 19 visible with an icon (1 hidden, 1 without Icon=, 1 not applications)", stdout
+        )
         self.assertIn("vendor icons: 15 distinct, 5 built from SVG, 3 built from raster, 7 skipped", stdout)
         self.assertIn("aliases: 5 own, 4 desktop entry, 4 MIME type", stdout)
         for line in (
@@ -481,10 +534,16 @@ class PublishedThemeTests(BuildCase):
             sorted(tree),
             sorted(
                 [".dux-icons-build", "index.theme"]
-                + [f"scalable/apps/{n}.svg" for n in ("alpha", "nobox", "photo", "pix", "raster", "slice", "styled", "zipped")]
+                + [
+                    f"scalable/apps/{n}.svg"
+                    for n in ("alpha", "nobox", "photo", "pix", "raster", "slice", "styled", "zipped")
+                ]
                 + [f"scalable/apps/{n}.svg" for n in ("actions", "hidden", "kde-nested", "twin")]
                 + [f"scalable/mimetypes/{n}.svg" for n in ("text-x-generic", "text-x-script", "x-office-document")]
-                + [f"scalable/mimetypes/{n}.svg" for n in ("application-pdf", "application-x-pdf", "text-plain", "text-x-python")]
+                + [
+                    f"scalable/mimetypes/{n}.svg"
+                    for n in ("application-pdf", "application-x-pdf", "text-plain", "text-x-python")
+                ]
                 + [f"scalable/places/{n}.svg" for n in ("folder", "inode-directory", "folder-documents", "folder-docs")]
             ),
         )
@@ -518,10 +577,18 @@ class PublishedThemeTests(BuildCase):
     def test_index_theme(self):
         self.built()
         index = (self.out / "index.theme").read_text()
-        self.assertTrue(index.startswith("[Icon Theme]\nName=Dux Icons\nComment=Material icons for Dux Modular Shell\nInherits=hicolor\n"))
+        self.assertTrue(
+            index.startswith(
+                "[Icon Theme]\nName=Dux Icons\nComment=Material icons for Dux Modular Shell\nInherits=hicolor\n"
+            )
+        )
         self.assertIn("\nDirectories=scalable/apps,scalable/mimetypes,scalable/places\n", index)
-        self.assertIn("\n[scalable/apps]\nContext=Applications\nSize=64\nMinSize=16\nMaxSize=512\nType=Scalable\n", index)
-        self.assertIn("\n[scalable/mimetypes]\nContext=MimeTypes\nSize=64\nMinSize=16\nMaxSize=512\nType=Scalable\n", index)
+        self.assertIn(
+            "\n[scalable/apps]\nContext=Applications\nSize=64\nMinSize=16\nMaxSize=512\nType=Scalable\n", index
+        )
+        self.assertIn(
+            "\n[scalable/mimetypes]\nContext=MimeTypes\nSize=64\nMinSize=16\nMaxSize=512\nType=Scalable\n", index
+        )
         self.assertIn("\n[scalable/places]\nContext=Places\nSize=64\nMinSize=16\nMaxSize=512\nType=Scalable\n", index)
         self.assertNotIn("@", index)
         self.assertNotRegex(index, r"\d+x\d+")
@@ -548,7 +615,9 @@ class PublishedThemeTests(BuildCase):
             ids = [el.get("id") for el in root.iter() if el.get("id")]
             self.assertEqual(len(ids), len(set(ids)), path)
             refs = re.findall(r"url\(#([^)]+)\)", text)
-            refs += [v[1:] for el in root.iter() for k, v in el.attrib.items() if k.endswith("href") and v.startswith("#")]
+            refs += [
+                v[1:] for el in root.iter() for k, v in el.attrib.items() if k.endswith("href") and v.startswith("#")
+            ]
             for ref in refs:
                 self.assertIn(ref, ids, path)
             for el in root.iter():
@@ -557,7 +626,10 @@ class PublishedThemeTests(BuildCase):
 
     def test_vendor_svg_is_inlined_with_the_computed_transform(self):
         self.built()
-        self.assertIn('<g id="c-svg1" transform="translate(10.24 10.24) scale(0.906667)" fill="#102030">', self.icon("apps/alpha.svg"))
+        self.assertIn(
+            '<g id="c-svg1" transform="translate(10.24 10.24) scale(0.906667)" fill="#102030">',
+            self.icon("apps/alpha.svg"),
+        )
         self.assertIn('<g id="dx-content" transform="translate(16 16) scale(2)">', self.icon("apps/zipped.svg"))
         self.assertIn("<mask", self.icon("apps/alpha.svg"))
 
@@ -574,7 +646,10 @@ class PublishedThemeTests(BuildCase):
 
     def test_jpeg_and_xpm_content(self):
         self.built()
-        self.assertIn('width="43.52" height="26.112" preserveAspectRatio="none" xlink:href="data:image/jpeg;base64,', self.icon("apps/photo.svg"))
+        self.assertIn(
+            'width="43.52" height="26.112" preserveAspectRatio="none" xlink:href="data:image/jpeg;base64,',
+            self.icon("apps/photo.svg"),
+        )
         pix = self.icon("apps/pix.svg")
         match = re.search(r'xlink:href="data:image/png;base64,([^"]+)"', pix)
         self.assertEqual(build.png_size(build.base64.b64decode(match.group(1))), (4, 2))
@@ -598,7 +673,9 @@ class PublishedThemeTests(BuildCase):
         palette = self.tmp / "palette.json"
         palette.write_text('{"badge": "#abc", "glyph": "#010203", "back": "#040506"}')
         self.assertIn("badge=#aabbcc glyph=#010203 back=#040506", self.built("--palette", str(palette)))
-        self.assertIn("badge=#aabbcc glyph=#ffffff back=#040506", self.built("--palette", str(palette), "--glyph", "#FFF"))
+        self.assertIn(
+            "badge=#aabbcc glyph=#ffffff back=#040506", self.built("--palette", str(palette), "--glyph", "#FFF")
+        )
         self.assertIn("badge=#9ecaff glyph=#003258", self.built("--from-dms"))
         self.assertIn("badge=#0061a4 glyph=#ffffff", self.built("--from-dms", "--mode", "light"))
         self.assertIn("badge=#0061a4 glyph=#000000", self.built("--from-dms", "--mode", "light", "--glyph", "#000"))
@@ -662,7 +739,9 @@ class PublishedThemeTests(BuildCase):
         palette = {"badge": "#9ecaff", "glyph": "#003258", "back": "#7ba7db"}
         self.assertEqual(build.mono_wrap("<g/>", palette).count("<feColorMatrix"), 1)
         wrapped = build.mono_wrap("<g/>", palette, 2.0, "back")
-        self.assertLess(wrapped.index(build.contrast_matrix(2.0)), wrapped.index(build.mono_matrix("#7ba7db", "#003258")))
+        self.assertLess(
+            wrapped.index(build.contrast_matrix(2.0)), wrapped.index(build.mono_matrix("#7ba7db", "#003258"))
+        )
 
     def test_shape_picks_the_template_and_its_fit(self):
         stdout = self.built("--shape", "square")
@@ -787,7 +866,9 @@ class VendorSourceTests(BuildCase):
     def desktop(self, name, icon):
         apps = self.data_home / "applications"
         apps.mkdir(parents=True, exist_ok=True)
-        (apps / f"{name}.desktop").write_text(f"[Desktop Entry]\nType=Application\nName={name}\nExec={name}\nIcon={icon}\n")
+        (apps / f"{name}.desktop").write_text(
+            f"[Desktop Entry]\nType=Application\nName={name}\nExec={name}\nIcon={icon}\n"
+        )
 
     def test_absolute_icon_paths(self):
         source = FIXTURES / "data/icons/hicolor/scalable/apps/slice.svg"
@@ -804,7 +885,9 @@ class VendorSourceTests(BuildCase):
         first, second = self.tmp / "one/icon.svg", self.tmp / "two/icon.svg"
         for path, color in ((first, "#111111"), (second, "#eeeeee")):
             path.parent.mkdir()
-            path.write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8" fill="{color}"/></svg>')
+            path.write_text(
+                f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8" fill="{color}"/></svg>'
+            )
         self.desktop("one-app", first)
         self.desktop("two-app", second)
         self.built()
@@ -828,8 +911,12 @@ class VendorSourceTests(BuildCase):
         )
         unlisted = self.data_home / "icons/Unlisted/64x64/apps"
         unlisted.mkdir(parents=True)
-        (unlisted / "other-thing.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8"/></svg>')
-        (unlisted.parent.parent / "index.theme").write_text("[Icon Theme]\nName=Unlisted\nDirectories=64x64/apps\n[64x64/apps]\nSize=64\n")
+        (unlisted / "other-thing.svg").write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8"/></svg>'
+        )
+        (unlisted.parent.parent / "index.theme").write_text(
+            "[Icon Theme]\nName=Unlisted\nDirectories=64x64/apps\n[64x64/apps]\nSize=64\n"
+        )
         self.desktop("stock-app", "stock-thing")
         self.desktop("other-app", "other-thing")
         stdout = self.built()
@@ -840,7 +927,9 @@ class VendorSourceTests(BuildCase):
     def test_user_entries_shadow_system_entries(self):
         apps = self.data_home / "applications"
         apps.mkdir(parents=True)
-        (apps / "styled.desktop").write_text("[Desktop Entry]\nType=Application\nName=styled\nIcon=styled\nHidden=true\n")
+        (apps / "styled.desktop").write_text(
+            "[Desktop Entry]\nType=Application\nName=styled\nIcon=styled\nHidden=true\n"
+        )
         stdout = self.built()
         self.assertIn("2 hidden", stdout)
         self.assertFalse((self.out / "scalable/apps/styled.svg").exists())
@@ -926,7 +1015,7 @@ class RenderTests(BuildCase):
         # White content stays off the badge color, or a light icon would vanish into it.
         self.assertNear(self.pixel("apps/slice.svg", 32, 32), build.parse_hex(build.darker("#9ecaff")) + (255,))
         self.assertNear(self.pixel("apps/slice.svg", 32, 48), (0x9E, 0xCA, 0xFF, 255))
-        red, green, blue, alpha = self.pixel("apps/slice.svg", 12, 23)
+        red, green, _blue, alpha = self.pixel("apps/slice.svg", 12, 23)
         self.assertEqual(alpha, 255)
         self.assertLess(red, 0x30)
         self.assertLess(green, 0x60)
@@ -966,7 +1055,11 @@ class SourceTreeTests(BuildCase):
 
     def test_the_folder_family_shares_one_placement(self):
         self.built(src=build.SRC)
-        family = [rel for rel in self.own() if re.fullmatch(r"places/(folder(-.+)?|user-home|user-desktop)|status/folder-open", rel)]
+        family = [
+            rel
+            for rel in self.own()
+            if re.fullmatch(r"places/(folder(-.+)?|user-home|user-desktop)|status/folder-open", rel)
+        ]
         self.assertIn("places/folder", family)
         placements = {}
         for rel in family:

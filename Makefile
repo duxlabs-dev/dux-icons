@@ -2,7 +2,7 @@ PREFIX ?= $(HOME)/.local
 BINDIR ?= $(PREFIX)/bin
 DATADIR ?= $(PREFIX)/share/dux-icons
 
-.PHONY: install link uninstall test
+.PHONY: install link uninstall test lint
 
 # DMS runs the `dux-icons` command when it is on PATH.
 install:
@@ -25,3 +25,9 @@ uninstall:
 
 test:
 	python3 -m unittest
+
+# Every check CI runs (.pre-commit-config.yaml), over the whole tree. Hooks that
+# fix files (ruff, whitespace) fail the run that changed something, so a failed
+# first pass gets a second one to confirm what is left.
+lint:
+	@prek run --all-files || prek run --all-files

@@ -1,0 +1,34 @@
+# Test fixtures are deliberately malformed in places (broken desktop entries,
+# odd whitespace), so the generic checks leave them alone.
+exclude: ^tests/fixtures/
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-xml # every SVG is XML
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-merge-conflict
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.6
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+  - repo: local
+    hooks:
+      - id: unittest
+        name: make test
+        entry: make test
+        language: system
+        files: ^(scripts|src|tests)/|^index\.theme\.in$
+        pass_filenames: false
