@@ -3,6 +3,7 @@ Name=Dux Icons
 Comment=Material icons for Dux Modular Shell
 Inherits=@inherits
 Example=folder
+FollowsColorScheme=true
 
 DesktopDefault=48
 DesktopSizes=16,22,24,32,48,64,128,256
