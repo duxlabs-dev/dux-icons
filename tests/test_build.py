@@ -634,6 +634,25 @@ class PublishedThemeTests(BuildCase):
         self.built(*args)
         return self.out
 
+    def test_dux_labs_apps_take_the_badge_hue_without_mono(self):
+        icons = self.data_home / "icons/hicolor/scalable/apps"
+        icons.mkdir(parents=True)
+        art = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#553C9A"/><rect width="9" height="9" style="fill:#F5F0FF"/></svg>'
+        for name in ("dev.duxlabs.files", "plain-purple"):
+            (icons / f"{name}.svg").write_text(art)
+        apps = self.data_home / "applications"
+        apps.mkdir()
+        for name in ("dev.duxlabs.files", "plain-purple"):
+            (apps / f"{name}.desktop").write_text(f"[Desktop Entry]\nType=Application\nName={name}\nIcon={name}\n")
+        self.built("--no-mono", "--badge", "#9ecaff")
+        ours = self.icon("apps/dev.duxlabs.files.svg")
+        for color in ("#553C9A", "#F5F0FF"):
+            lightness = build.rgb_to_lab(build.parse_hex(color))[0]
+            self.assertIn(build.toned("#9ecaff", lightness), ours)
+            self.assertNotIn(color, ours)
+        self.assertIn("#553C9A", self.icon("apps/plain-purple.svg"))
+        self.assertIn('<g filter="url(#dx-mono)">', self.icon("apps/dev.duxlabs.files.svg", out=self.rebuilt("--mono")))
+
     def test_mono_contrast_adds_a_stretch_before_the_tones(self):
         values = [float(v) for v in build.contrast_matrix(2.0).split()]
         for gray, expected in ((0.5, 0.5), (0.25, 0.0), (0.75, 1.0), (0.6, 0.7)):

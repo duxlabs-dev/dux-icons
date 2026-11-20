@@ -43,6 +43,7 @@ ID_PREFIX = "c-"
 SCOPE_ID = "dx-content"
 CLIP_ID = "dx-clip"
 MONO_ID = "dx-mono"
+OUR_APPS = "dev.duxlabs."
 FILL_ID = "dx-fill"
 
 SVG_NS = "http://www.w3.org/2000/svg"
@@ -64,6 +65,8 @@ CONTEXTS = {
 
 TOKEN_RE = re.compile(r"@(badge|glyph|back)\b")
 STRAY_TOKEN_RE = re.compile(r"(?<![\w&])@[A-Za-z][\w-]*")
+# A color written as an attribute or style value; an id like url(#add) is left alone.
+COLOR_RE = re.compile(r"(?<=[\"':\s])#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})(?=[\"';\s)])")
 NAME_RE = re.compile(r"[A-Za-z0-9_+][A-Za-z0-9_.+@-]*\Z")
 
 
@@ -145,8 +148,13 @@ def lab_to_rgb_float(lab: tuple[float, float, float]) -> tuple[float, float, flo
 
 def darker(color: str, tones: float = 12.0, floor: float = 10.0, ceiling: float = 98.0) -> str:
     """CIELAB L* lowered by `tones` (raised when negative), keeping hue and as much chroma as sRGB allows."""
-    lightness, a, b = rgb_to_lab(parse_hex(color))
-    target = min(ceiling, max(floor, lightness - tones))
+    lightness = rgb_to_lab(parse_hex(color))[0]
+    return toned(color, min(ceiling, max(floor, lightness - tones)))
+
+
+def toned(color: str, target: float) -> str:
+    """`color` at CIELAB L* `target`, keeping hue and as much chroma as sRGB allows."""
+    _, a, b = rgb_to_lab(parse_hex(color))
     chroma = math.hypot(a, b)
     hue = math.atan2(b, a)
 
@@ -167,6 +175,11 @@ def darker(color: str, tones: float = 12.0, floor: float = 10.0, ceiling: float 
                 high = mid
         rgb = at(low)
     return to_hex(tuple(min(255, max(0, round(v * 255))) for v in rgb))
+
+
+def retone(content: str, badge: str) -> str:
+    """Every color in `content` moved onto the badge hue, each keeping its own lightness."""
+    return COLOR_RE.sub(lambda m: toned(badge, rgb_to_lab(parse_hex(m.group()))[0]), content)
 
 
 def mono_matrix(badge: str, glyph: str) -> str:
@@ -1354,6 +1367,8 @@ def build_vendor(
         kind, content = built
         if mono:
             content = mono_wrap(content, palette, contrast, "back")
+        elif name.startswith(OUR_APPS):
+            content = retone(content, palette["badge"])
         theme.add_icon("apps", name, assemble(template, content))
         theme.paths.update((icon, name) for icon in record["icons"] if is_path(icon))
         report.add(f"vendor-{kind}")
