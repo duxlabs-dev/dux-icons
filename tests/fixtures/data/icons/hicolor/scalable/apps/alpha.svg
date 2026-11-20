@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with a vector editor -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+  <!ENTITY accent "#ff8800">
+]>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+     xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     id="svg1" width="48" height="48" viewBox="0 0 48 48" fill="#102030"
+     inkscape:version="1.3" sodipodi:docname="alpha.svg" onload="init()">
+  <title>Alpha</title>
+  <sodipodi:namedview id="namedview1" pagecolor="#ffffff"/>
+  <metadata id="metadata1"><rdf:RDF/></metadata>
+  <defs id="defs1">
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="&accent;"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="grad2" xlink:href="#grad" gradientTransform="rotate(90)"/>
+    <rect id="tile" width="12" height="12" rx="2" inkscape:label="tile"/>
+  </defs>
+  <clipPath id="clip"><rect width="48" height="30"/></clipPath>
+  <rect id="bg" x="4" y="4" width="40" height="40" rx="8" fill="url(#grad)" style="stroke:url(#grad2);stroke-width:2"/>
+  <use xlink:href="#tile" x="10" y="10"/>
+  <use href="#tile" x="26" y="26" clip-path="url('#clip')"/>
+  <text x="6" y="42" font-size="6">a <tspan font-weight="bold">b</tspan> &lt;c&gt;</text>
+  <script>init = function() {}</script>
+</svg>

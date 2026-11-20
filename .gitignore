@@ -1,0 +1,15 @@
+.DS_Store
+*~
+*.swp
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+icon-theme.cache
+
+# Output of the previous build script, kept in some checkouts. The build no
+# longer writes into the checkout.
+/scalable/
+/64x64/
+/128x128/
+/index.theme

@@ -1,0 +1,10 @@
+/* XPM */
+static char * pix_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"4 2 4 1",
+"  c None",
+". c #FF0000",
+"+ c black",
+"o c gray50",
+" .+ ",
+".++o"};

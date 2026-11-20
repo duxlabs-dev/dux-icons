@@ -1,0 +1,7 @@
+{
+  "mode": "dark",
+  "colors": {
+    "dark": { "primary": "#9ecaff", "on_primary": "#003258" },
+    "light": { "primary": "#0061a4", "on_primary": "#ffffff" }
+  }
+}

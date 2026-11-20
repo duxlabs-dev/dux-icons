@@ -1,0 +1,19 @@
+{
+  "mimetypes": {
+    "text-x-generic": ["text-x-generic-template"],
+    "x-office-document": ["x-office-address-book", "x-office-calendar"]
+  },
+  "places": {
+    "folder": ["inode-directory"],
+    "folder-download": ["folder-downloads"],
+    "folder-music": ["folder-sound"],
+    "folder-pictures": ["folder-image", "folder-images", "folder-picture"],
+    "folder-publicshare": ["folder-public"],
+    "folder-videos": ["folder-video"],
+    "user-desktop": ["folder-desktop"],
+    "user-home": ["folder-home"]
+  },
+  "status": {
+    "folder-open": ["folder-drag-accept", "folder-visiting"]
+  }
+}

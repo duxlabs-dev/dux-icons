@@ -1,0 +1,9 @@
+{
+  "mimetypes": {
+    "text-x-generic": ["text-x-script", "x-office-document"]
+  },
+  "places": {
+    "folder": ["inode-directory", "folder-documents", "folder-docs"],
+    "absent": ["orphan"]
+  }
+}

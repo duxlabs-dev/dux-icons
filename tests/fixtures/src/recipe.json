@@ -1,0 +1,19 @@
+{
+  "template": "circle",
+  "shapes": { "square": { "vendorPadding": 0.1 } },
+  "vendorThemes": ["Stock"],
+  "mono": false,
+  "tokens": {
+    "badge": "primary",
+    "glyph": "on_primary"
+  },
+  "layout": {
+    "vendorPadding": 0.16,
+    "ownPadding": 0.2,
+    "offset": [0, 0]
+  },
+  "overrides": [
+    { "match": "folder", "offset": [0, -1.6] },
+    { "match": "zipped", "padding": 0.25 }
+  ]
+}

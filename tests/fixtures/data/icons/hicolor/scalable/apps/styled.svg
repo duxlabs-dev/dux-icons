@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect class="plate" width="32" height="32" rx="6"/>
+  <circle class="dot big" cx="16" cy="16" r="8"/>
+  <path id="mark" d="M9 15h14v2H9z"/>
+  <style type="text/css"><![CDATA[
+    /* the sheet comes after the shapes on purpose */
+    svg { stroke-linecap: round; }
+    .plate { fill: #20304a; }
+    circle { fill: #ffcc00; }
+    circle.dot.big:hover, .dot > .big { opacity: 1; }
+    #mark { stroke: url(#ink); stroke-width: 2; fill: none; }
+    [class~="plate"] { stroke-width: 1.5; }
+    @media (min-width: 1px) { .plate { stroke: #ffffff; } }
+    @import url("other.css");
+  ]]></style>
+  <linearGradient id="ink"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#9cf"/></linearGradient>
+</svg>

@@ -1,0 +1,30 @@
+{
+  "template": "squircle",
+  "mono": false,
+  "monoContrast": 2.2,
+  "gradient": false,
+  "shapes": {
+    "rounded": { "vendorPadding": 0.09 },
+    "squircle": { "vendorPadding": 0.09 },
+    "square": { "vendorPadding": 0.09 },
+    "cookie": { "vendorPadding": 0.18, "ownPadding": 0.16 },
+    "hexagon": { "vendorPadding": 0.18, "ownPadding": 0.16 }
+  },
+  "vendorThemes": ["Papirus", "breeze", "Adwaita", "AdwaitaLegacy", "oxygen", "gnome"],
+  "tokens": {
+    "badge": "primary",
+    "glyph": "on_primary"
+  },
+  "layout": {
+    "vendorPadding": 0.14,
+    "ownPadding": 0.12,
+    "offset": [0, 0]
+  },
+  "overrides": [
+    {
+      "match": ["places/folder", "places/folder-*", "places/user-home", "places/user-desktop", "status/folder-open"],
+      "offset": [0, -1.6]
+    }
+  ],
+  "inherits": ["hicolor"]
+}

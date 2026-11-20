@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=actions
+Exec=actions
+Icon=zipped
+
+[Desktop Action New]
+Name=New
+Icon=ghost
+Exec=actions --new
