@@ -55,6 +55,12 @@ MAX_RASTER_SIDE = 4096
 PREFERRED_RASTER_SIDE = 256
 
 PATHS_FILE = "icon-paths.json"
+# App icons without the badge, for panels too small for it; outside the theme's directories, so no lookup finds them.
+BARE = "bare"
+BARE_TEMPLATE = (
+    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64">'
+    "@content</svg>\n"
+)
 # Tones the badge gradient is lighter at the top and darker at the bottom.
 GRADIENT_TONES = (8.0, 10.0)
 
@@ -1169,10 +1175,12 @@ class Theme:
         # `Icon=` values that are file paths, which no theme lookup reaches, by the icon built from them.
         self.paths: dict[str, str] = {}
 
-    def add_icon(self, context: str, name: str, svg: str) -> None:
+    def add_icon(self, context: str, name: str, svg: str, bare: str = "") -> None:
         rel = f"{SCALABLE}/{context}/{name}.svg"
         self.files[rel] = svg.encode("utf-8")
         self.names[name] = rel
+        if bare:
+            self.files[f"{BARE}/{context}/{name}.svg"] = assemble(BARE_TEMPLATE, bare).encode("utf-8")
 
     def add_alias(self, name: str, target: str, context: str | None = None) -> bool:
         """Symlink `name` to icon `target`; False when it cannot or need not be made."""
@@ -1182,6 +1190,10 @@ class Theme:
         folder = f"{SCALABLE}/{context}" if context else os.path.dirname(real)
         self.links[f"{folder}/{name}.svg"] = os.path.relpath(real, folder)
         self.names[name] = real
+        bare_real = BARE + real.removeprefix(SCALABLE)
+        if bare_real in self.files:
+            bare_folder = BARE + folder.removeprefix(SCALABLE)
+            self.links[f"{bare_folder}/{name}.svg"] = os.path.relpath(bare_real, bare_folder)
         return True
 
     def contexts(self) -> list[str]:
@@ -1255,10 +1267,15 @@ def build_own(theme: Theme, recipe: dict, src: Path, template: str, palette: dic
                 raise Skip("unknown-token")
             slot = layout_for(context, name, recipe, own=True)
             content = inline_svg(parse_svg(painted.encode("utf-8")), slot, clip=False)
+            bare = ""
+            if context == "apps":
+                # Off the badge, the glyph takes the badge color to stay readable on the panel.
+                unbadged = paint_tokens(text, {**palette, "glyph": palette["badge"]})
+                bare = inline_svg(parse_svg(unbadged.encode("utf-8")), Slot(0.0, (0.0, 0.0)), clip=False)
         except Skip as skip:
             report.skip("own", skip.reason, rel)
             continue
-        theme.add_icon(context, name, assemble(template, content))
+        theme.add_icon(context, name, assemble(template, content), bare)
         report.add("own")
 
 
@@ -1354,6 +1371,7 @@ def build_vendor(
                     raise Skip("own-icon")
                 path = icons.resolve(icon)
                 built = vendor_content(path, layout_for("apps", name, recipe, own=False))
+                _, bare = vendor_content(path, Slot(0.0, (0.0, 0.0)))
                 break
             except Skip as skip:
                 failure = failure or skip
@@ -1363,9 +1381,12 @@ def build_vendor(
         kind, content = built
         if mono:
             content = mono_wrap(content, palette, contrast, "back")
+            # No badge to keep light content off, so the tones span up to the badge color.
+            bare = mono_wrap(bare, palette, contrast, "badge")
         elif name.startswith(OUR_APPS):
             content = retone(content, palette["badge"])
-        theme.add_icon("apps", name, assemble(template, content))
+            bare = retone(bare, palette["badge"])
+        theme.add_icon("apps", name, assemble(template, content), bare)
         theme.paths.update((icon, name) for icon in record["icons"] if is_path(icon))
         report.add(f"vendor-{kind}")
         pending_aliases += [(alias, name) for alias in sorted(record["aliases"])]

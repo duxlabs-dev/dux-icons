@@ -525,7 +525,7 @@ class PublishedThemeTests(BuildCase):
             "palette: badge=#6750a4 glyph=#ffffff back=#473484 mono=no shape=circle gradient=no",
         ):
             self.assertIn(line, stdout)
-        self.assertRegex(stdout, r"10 files, 13 symlinks, built in \d+\.\d\ds")
+        self.assertRegex(stdout, r"18 files, 17 symlinks, built in \d+\.\d\ds")
 
     def test_tree_layout(self):
         self.built()
@@ -539,6 +539,11 @@ class PublishedThemeTests(BuildCase):
                     for n in ("alpha", "nobox", "photo", "pix", "raster", "slice", "styled", "zipped")
                 ]
                 + [f"scalable/apps/{n}.svg" for n in ("actions", "hidden", "kde-nested", "twin")]
+                + [
+                    f"bare/apps/{n}.svg"
+                    for n in ("alpha", "nobox", "photo", "pix", "raster", "slice", "styled", "zipped")
+                    + ("actions", "hidden", "kde-nested", "twin")
+                ]
                 + [f"scalable/mimetypes/{n}.svg" for n in ("text-x-generic", "text-x-script", "x-office-document")]
                 + [
                     f"scalable/mimetypes/{n}.svg"
@@ -690,6 +695,17 @@ class PublishedThemeTests(BuildCase):
             self.assertFalse(self.out.exists())
         self.env["XDG_CACHE_HOME"] = str(self.tmp / "no-cache")
         self.assertEqual(self.build("--from-dms")[0], 1)
+
+    def test_bare_app_icons_drop_the_badge_and_keep_mono(self):
+        self.built("--mono", "--badge", "#9ecaff", "--glyph", "#003258")
+        bare = self.out / "bare" / "apps"
+        text = (bare / "alpha.svg").read_text(encoding="utf-8")
+        self.assertIn("<circle", self.icon("apps/alpha.svg"))
+        self.assertNotIn("<circle", text)
+        self.assertIn(f'values="{build.mono_matrix("#9ecaff", "#003258")}"', text)
+        ET.fromstring(text)
+        self.assertEqual(os.readlink(bare / "twin.svg"), "alpha.svg")
+        self.assertNotIn(build.BARE, (self.out / "index.theme").read_text(encoding="utf-8"))
 
     def test_mono_filters_vendor_content_only(self):
         stdout = self.built("--mono", "--badge", "#9ecaff", "--glyph", "#003258")
