@@ -14,7 +14,7 @@ Built for [DMS](https://github.com/duxlabs-dev/dux-shell), works on any freedesk
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="assets/hero-light.png">
-  <img src="assets/hero-dark.png" alt="Dux Icons banner: the Dux logo and the line An icon theme that follows your colors, beside app icons in their own colors, a Ghostty glyph on a theme tile, app icons ringed in their own hue, and colored folders and file types" width="880">
+  <img src="assets/hero-dark.png" alt="Dux Icons banner: the Dux logo and title beside three grouped rows on squircle tiles — Edge Match app icons, the four Dux apps (Files, Calendar, Edit, Connect), and theme-colored folders and file types" width="880">
 </picture>
 
 </div>
@@ -44,7 +44,7 @@ Keep each app's own artwork (Color), repaint it in two tones of its tile (Tinted
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="assets/styles-light.png">
-  <img src="assets/styles-dark.png" alt="The same eight icons in each app style: Color, Tinted, Themed and Monochrome, then in Color on ring tiles" width="720">
+  <img src="assets/styles-dark.png" alt="The same six apps in each app style: Color (Edge Match), Tinted, Themed and Monochrome, then in Color on ring tiles" width="720">
 </picture>
 
 **A normal icon theme**
