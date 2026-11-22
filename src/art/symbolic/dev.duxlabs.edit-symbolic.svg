@@ -1,0 +1,5 @@
+<!-- Dux Edit, symbolic: the note of the full-color art with its text lines knocked out and its corner folded. Original (MIT). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M3.5 1.5H12.5Q14.5 1.5 14.5 3.5V9.2L9.2 14.5H3.5Q1.5 14.5 1.5 12.5V3.5Q1.5 1.5 3.5 1.5ZM4.5 4.6V6.4H11.5V4.6ZM4.5 8V9.8H8.2V8Z"/>
+  <path d="M10.6 14.5 14.5 10.6V12.5Q14.5 14.5 12.5 14.5Z"/>
+</svg>

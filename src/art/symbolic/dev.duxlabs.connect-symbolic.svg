@@ -1,0 +1,6 @@
+<!-- Dux Connect, symbolic: the phone mirrored on the desktop screen of the full-color art, one solid color. Original (MIT). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M2.5 1.5H13.5Q15 1.5 15 3V9.8Q15 11.3 13.5 11.3H2.5Q1 11.3 1 9.8V3Q1 1.5 2.5 1.5ZM2.6 3.1V9.7H13.4V3.1Z"/>
+  <path d="M6.8 4.1H9.2Q10 4.1 10 4.9V8.1Q10 8.9 9.2 8.9H6.8Q6 8.9 6 8.1V4.9Q6 4.1 6.8 4.1Z"/>
+  <path d="M7.1 11.3H8.9V12.9H10.9Q11.7 12.9 11.7 13.7T10.9 14.5H5.1Q4.3 14.5 4.3 13.7T5.1 12.9H7.1Z"/>
+</svg>

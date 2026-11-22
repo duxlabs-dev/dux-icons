@@ -4,7 +4,7 @@
   "vendorThemes": ["Stock"],
   "mono": false,
   "tokens": {
-    "badge": "primary",
+    "tile": "primary",
     "glyph": "on_primary"
   },
   "layout": {

@@ -1,7 +1,59 @@
 {
   "mimetypes": {
-    "text-x-generic": ["text-x-generic-template"],
-    "x-office-document": ["x-office-address-book", "x-office-calendar"]
+    "application-pdf": ["application-x-bzpdf", "application-x-gzpdf", "application-x-xzpdf"],
+    "media-optical": [
+      "application-vnd.efi.img",
+      "application-vnd.efi.iso",
+      "application-x-apple-diskimage",
+      "application-x-cd-image",
+      "application-x-compressed-iso",
+      "application-x-discjuggler-cd-image",
+      "application-x-iso",
+      "application-x-iso9660-image",
+      "application-x-raw-disk-image"
+    ],
+    "text-x-generic": ["application-octet-stream", "application-x-generic", "text-x-generic-template", "unknown"],
+    "x-office-document": [
+      "application-msword",
+      "application-msword-template",
+      "application-rtf",
+      "application-vnd.apple.pages",
+      "application-vnd.ms-word.document.macroEnabled.12",
+      "application-vnd.ms-word.template.macroEnabled.12",
+      "application-vnd.oasis.opendocument.text",
+      "application-vnd.oasis.opendocument.text-flat-xml",
+      "application-vnd.oasis.opendocument.text-template",
+      "application-vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application-vnd.openxmlformats-officedocument.wordprocessingml.template",
+      "x-office-address-book",
+      "x-office-calendar"
+    ],
+    "x-office-presentation": [
+      "application-vnd.apple.keynote",
+      "application-vnd.ms-powerpoint",
+      "application-vnd.ms-powerpoint.presentation.macroEnabled.12",
+      "application-vnd.ms-powerpoint.slideshow.macroEnabled.12",
+      "application-vnd.oasis.opendocument.presentation",
+      "application-vnd.oasis.opendocument.presentation-flat-xml",
+      "application-vnd.oasis.opendocument.presentation-template",
+      "application-vnd.openxmlformats-officedocument.presentationml.presentation",
+      "application-vnd.openxmlformats-officedocument.presentationml.slideshow",
+      "application-vnd.openxmlformats-officedocument.presentationml.template"
+    ],
+    "x-office-spreadsheet": [
+      "application-vnd.apple.numbers",
+      "application-vnd.ms-excel",
+      "application-vnd.ms-excel.sheet.binary.macroEnabled.12",
+      "application-vnd.ms-excel.sheet.macroEnabled.12",
+      "application-vnd.ms-excel.template.macroEnabled.12",
+      "application-vnd.oasis.opendocument.spreadsheet",
+      "application-vnd.oasis.opendocument.spreadsheet-flat-xml",
+      "application-vnd.oasis.opendocument.spreadsheet-template",
+      "application-vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application-vnd.openxmlformats-officedocument.spreadsheetml.template",
+      "text-csv",
+      "text-tab-separated-values"
+    ]
   },
   "places": {
     "folder": ["inode-directory"],

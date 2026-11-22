@@ -19,8 +19,8 @@ Material Symbols by Google.
 
 Changes made to the upstream files: path data was scaled and moved from the
 960-unit Material canvas onto the Dux Icons 24-unit grid, rounded to two
-decimals, placed on a folder, a document sheet or the badge itself, and its
-fill replaced by the build tokens @glyph, @badge and @back. Nothing else from
+decimals, placed on a folder, a document sheet or the tile itself, and its
+fill replaced by the build tokens @glyph, @tile and @back. Nothing else from
 upstream is shipped.
 
 1. Path data taken from a Material Symbol (scaled and moved, shape unchanged)
@@ -79,6 +79,19 @@ upstream is shipped.
   site. It stands for DMS and is not a mark of Dux Icons to reuse elsewhere.
 
 Each mark lives in its own file so any of them can be replaced on its own.
+
+App glyphs
+----------
+
+The one-color app glyphs drawn by the Themed and Monochrome app icon styles
+are original to Dux Icons (MIT):
+
+  src/art/symbolic/dev.duxlabs.*-symbolic.svg   our own apps, after their
+                                                full-color art in src/art/apps
+  src/mono/apps/com.mitchellh.ghostty.svg       a ghost with a shell prompt
+
+Every other app glyph is drawn at build time from the app's own icon, or from
+an icon theme installed on the machine; none is shipped.
 
 ------------------------------------------------------------------------
 

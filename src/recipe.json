@@ -1,18 +1,20 @@
 {
   "template": "squircle",
-  "mono": false,
+  "appStyle": "color",
   "monoContrast": 2.2,
   "gradient": false,
+  "filesStyle": "standard",
   "shapes": {
     "rounded": { "vendorPadding": 0.09 },
     "squircle": { "vendorPadding": 0.09 },
     "square": { "vendorPadding": 0.09 },
+    "clover": { "vendorPadding": 0.2, "ownPadding": 0.18 },
     "cookie": { "vendorPadding": 0.18, "ownPadding": 0.16 },
     "hexagon": { "vendorPadding": 0.18, "ownPadding": 0.16 }
   },
   "vendorThemes": ["Papirus", "breeze", "Adwaita", "AdwaitaLegacy", "oxygen", "gnome"],
   "tokens": {
-    "badge": "primary",
+    "tile": "primary",
     "glyph": "on_primary"
   },
   "layout": {

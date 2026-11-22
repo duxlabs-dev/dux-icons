@@ -1,0 +1,5 @@
+{
+  "apps": {
+    "com.mitchellh.ghostty": ["ghostty"]
+  }
+}
